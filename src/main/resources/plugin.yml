@@ -1,4 +1,4 @@
 name: FeedableSheep
 version: '0.1.0'
 main: dk.bjom.feedableSheep.FeedableSheep
-api-version: '1.21'
+api-version: '1.21.11'

@@ -1,0 +1,8 @@
+valid_items:
+  - SHORT_GRASS
+  - TALL_GRASS
+  - GRASS_BLOCK
+  - FERN
+
+item_drops:
+  GRASS_BLOCK: DIRT

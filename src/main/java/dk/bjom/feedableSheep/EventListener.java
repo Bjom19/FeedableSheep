@@ -9,12 +9,45 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
+
 public class EventListener implements Listener {
+    private final FeedableSheep plugin;
+    private final Set<Material> validItems;
+    private final Map<Material, Material> itemDrops;
+
+    public EventListener(FeedableSheep plugin) {
+        this.plugin = plugin;
+        validItems = getValidItems();
+        itemDrops = getItemDrops();
+    }
+
+    private Set<Material> getValidItems() {
+        Set<Material> items = EnumSet.noneOf(Material.class);
+        plugin.getConfig().getStringList("valid_items").forEach(item ->
+            items.add(Material.valueOf(item))
+        );
+        return items;
+    }
+
+    private Map<Material, Material> getItemDrops() {
+        Map<Material, Material> drops = new EnumMap<>(Material.class);
+        var section = plugin.getConfig().getConfigurationSection("item_drops");
+        if (section == null) return drops;
+        for (String key : section.getKeys(false)) {
+            drops.put(Material.valueOf(key), Material.valueOf(section.getString(key)));
+        }
+        return drops;
+    }
+
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         ItemStack itemInHand = player.getInventory().getItem(event.getHand());
-        if (itemInHand.getType() != Material.SHORT_GRASS && itemInHand.getType() != Material.GRASS_BLOCK && itemInHand.getType() != Material.TALL_GRASS) return;
+        if (!validItems.contains(itemInHand.getType())) return;
 
         if (event.getRightClicked() instanceof Sheep sheep) {
             sheep.setSheared(false);
@@ -38,8 +71,9 @@ public class EventListener implements Listener {
                 event.getPlayer().getInventory().setItem(event.getHand(), null);
             }
 
-            if (itemInHand.getType() == Material.GRASS_BLOCK) {
-                player.give(ItemStack.of(Material.DIRT, 1));
+            Material drop = itemDrops.get(itemInHand.getType());
+            if (drop != null) {
+                player.give(ItemStack.of(drop, 1));
             }
         }
     }

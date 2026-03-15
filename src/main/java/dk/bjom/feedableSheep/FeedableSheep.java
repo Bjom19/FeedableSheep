@@ -6,8 +6,11 @@ public final class FeedableSheep extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveResource("config.yml", false);
+        saveDefaultConfig();
+
         // Plugin startup logic
-        getServer().getPluginManager().registerEvents(new EventListener(), this);
+        getServer().getPluginManager().registerEvents(new EventListener(this), this);
     }
 
     @Override
