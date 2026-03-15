@@ -3,6 +3,8 @@ valid_items:
   - TALL_GRASS
   - GRASS_BLOCK
   - FERN
+  - TALL_FERN
 
 item_drops:
   GRASS_BLOCK: DIRT
+
